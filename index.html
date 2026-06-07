@@ -1,0 +1,1586 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú del Amor — Una Experiencia Gastronómica</title>
+    
+    <!-- Google Fonts: Cormorant Garamond & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN para maquetación ágil y moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons para interfaz limpia -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        warm: {
+                            50: '#fdfbf7',
+                            100: '#f7f3eb',
+                            200: '#efe7d8',
+                            800: '#2c221e',
+                            900: '#1e1613',
+                        },
+                        gold: '#c49b65',
+                        sage: '#8da189',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Desplazamiento suave y snapping para la navegación de revista editorial */
+        .editorial-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+            scrollbar-width: none; /* Firefox */
+        }
+        .editorial-container::-webkit-scrollbar {
+            display: none; /* Safari & Chrome */
+        }
+        .editorial-section {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Efecto luz de velas */
+        .candle-mode {
+            filter: sepia(0.3) saturate(0.95) contrast(0.95);
+            background-color: #120c0a !important;
+        }
+        .candle-glow {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, rgba(235, 140, 52, 0.08) 0%, rgba(0,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 40;
+            mix-blend-mode: color-dodge;
+            animation: flicker 4s infinite alternate;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        .candle-active .candle-glow {
+            opacity: 1;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            20% { opacity: 0.75; transform: scale(0.97); }
+            40% { opacity: 0.93; transform: scale(1.03); }
+            60% { opacity: 0.82; transform: scale(0.98); }
+            80% { opacity: 0.89; transform: scale(1.01); }
+        }
+
+        /* Transiciones suaves */
+        .transition-all-custom {
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Ocultar barra lateral en pantallas pequeñas */
+        @media (max-width: 1024px) {
+            .nav-dots { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-warm-50 text-warm-900 font-sans overflow-hidden transition-colors duration-1000">
+
+    <!-- Capa de brillo de vela -->
+    <div class="candle-glow"></div>
+
+    <!-- Lienzo interactivo para lluvia de estrellas y gatitos mágicos -->
+    <canvas id="sparkle-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+    <!-- ========================================== -->
+    <!-- ACTO 1: APERTURA CINEMATOGRÁFICA (INTRO) -->
+    <!-- ========================================== -->
+    <div id="intro-screen" class="fixed inset-0 bg-black z-50 flex flex-col justify-between p-8 overflow-hidden transition-opacity duration-[1000ms]">
+        <!-- Canvas para simulación 3D de espacio y mapa -->
+        <canvas id="intro-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-80"></canvas>
+        
+        <!-- Header de carga o estado -->
+        <div class="relative z-10 flex justify-between items-center w-full max-w-6xl mx-auto">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 rounded-full bg-gold animate-ping"></div>
+                <span class="text-[10px] tracking-[4px] text-zinc-400 uppercase font-sans">Sincronizando Coordenadas</span>
+            </div>
+            <div class="text-[10px] tracking-[3px] text-zinc-400 font-sans" id="coords-display">LAT: 0.000000 | LON: 0.000000</div>
+        </div>
+
+        <!-- Mensajes Narrativos Centrales -->
+        <div class="relative z-10 text-center my-auto max-w-xl mx-auto px-4">
+            <div id="narrative-text" class="font-serif italic text-xl md:text-3xl text-zinc-300 transition-all duration-[600ms] opacity-0 transform translate-y-4">
+                Toda historia de amor comienza en algún rincón del cosmos...
+            </div>
+            <div id="narrative-subtext" class="font-sans text-xs tracking-[5px] uppercase text-gold mt-4 transition-all duration-[600ms] delay-150 opacity-0">
+                Iniciando Descenso
+            </div>
+        </div>
+
+        <!-- Footer del Intro -->
+        <div class="relative z-10 flex flex-col items-center justify-center space-y-3 max-w-6xl mx-auto w-full">
+            <button id="skip-intro-btn" class="border border-zinc-700 hover:border-gold text-zinc-300 hover:text-white transition-all text-[11px] tracking-[4px] uppercase py-2.5 px-6 rounded-full font-sans bg-black/40 backdrop-blur-sm">
+                Entrar al Menú de Inmediato
+            </button>
+            <p class="text-[9px] text-zinc-500 tracking-wider">Música generativa ambiental se activará al hacer clic</p>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- MENÚ PRINCIPAL Y CONTENIDO EDITORIAL -->
+    <!-- ========================================== -->
+    <div id="main-content" class="hidden opacity-0 transition-opacity duration-[1500ms]">
+        
+        <!-- Botones flotantes superiores -->
+        <div class="fixed top-6 right-6 z-40 flex items-center space-x-3">
+            <!-- Botón Música -->
+            <button id="toggle-music" class="p-3 bg-warm-100 hover:bg-warm-200 border border-warm-200 rounded-full text-warm-900 shadow-md transition-all duration-300 flex items-center justify-center focus:outline-none" title="Música de ambiente">
+                <i data-lucide="music-2" class="w-5 h-5 text-gold"></i>
+            </button>
+
+            <!-- Botón Velas (Brillitos y Gatitos) -->
+            <button id="toggle-candle" class="p-3 bg-warm-100 hover:bg-warm-200 border border-warm-200 rounded-full text-warm-900 shadow-md transition-all duration-300 flex items-center justify-center focus:outline-none" title="Modo Cena Romántica & Gatitos">
+                <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+            </button>
+        </div>
+
+        <!-- Indicador de Navegación Lateral (Índice de días) -->
+        <div class="nav-dots fixed left-8 top-1/2 transform -translate-y-1/2 z-40 space-y-4 bg-warm-900/5 backdrop-blur-md p-4 rounded-2xl border border-warm-900/10">
+            <div class="text-[9px] uppercase tracking-[3px] text-gold font-sans font-medium text-center pb-2 border-b border-warm-900/10">Menú</div>
+            <a href="#hero-section" class="dot-link group flex items-center space-x-3 text-xs" data-target="0">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Inicio</span>
+            </a>
+            <a href="#lunes" class="dot-link group flex items-center space-x-3 text-xs" data-target="1">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Lunes</span>
+            </a>
+            <a href="#martes" class="dot-link group flex items-center space-x-3 text-xs" data-target="2">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Martes</span>
+            </a>
+            <a href="#miercoles" class="dot-link group flex items-center space-x-3 text-xs" data-target="3">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Miércoles</span>
+            </a>
+            <a href="#jueves" class="dot-link group flex items-center space-x-3 text-xs" data-target="4">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Jueves</span>
+            </a>
+            <a href="#viernes" class="dot-link group flex items-center space-x-3 text-xs" data-target="5">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Viernes</span>
+            </a>
+            <a href="#sabado" class="dot-link group flex items-center space-x-3 text-xs" data-target="6">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Sábado</span>
+            </a>
+            <a href="#domingo" class="dot-link group flex items-center space-x-3 text-xs" data-target="7">
+                <span class="dot-indicator w-1.5 h-1.5 rounded-full bg-warm-900/40 group-hover:bg-gold transition-all duration-300"></span>
+                <span class="text-[10px] uppercase tracking-wider text-warm-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300">Domingo</span>
+            </a>
+        </div>
+
+        <div class="editorial-container" id="editorial-wrapper">
+
+            <!-- ========================================== -->
+            <!-- ACTO 2: HERO PRINCIPAL DE INICIO -->
+            <!-- ========================================== -->
+            <section id="hero-section" class="editorial-section flex flex-col justify-between items-center bg-zinc-950 text-white relative overflow-hidden">
+                <!-- Obra de arte abstracta clásica en el fondo -->
+                <div class="absolute inset-0 z-0 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=1920&q=80" alt="Óleo botánico de autor" class="w-full h-full object-cover opacity-35 filter brightness-50 contrast-125">
+                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-zinc-950/40"></div>
+                </div>
+
+                <!-- Cabecera mínima -->
+                <div class="relative z-10 pt-10 text-center">
+                    <span class="text-[10px] uppercase tracking-[6px] text-gold/80 font-medium font-sans">Gastronomía & Galería de Arte</span>
+                </div>
+
+                <!-- Título Cinematográfico Principal -->
+                <div class="relative z-10 text-center max-w-4xl px-4 my-auto select-none">
+                    <h2 class="font-serif italic text-gold text-2xl md:text-3xl font-light mb-4 tracking-wider leading-relaxed">Una mesa para dos</h2>
+                    <h1 class="font-serif text-5xl md:text-8xl tracking-[8px] uppercase font-light leading-none mb-8">
+                        MENÚ DEL AMOR
+                    </h1>
+                    <div class="w-20 h-[1px] bg-gold/50 mx-auto mb-8"></div>
+                    <p class="font-sans text-xs md:text-sm text-zinc-300 max-w-lg mx-auto leading-relaxed tracking-wider uppercase">
+                        Siete días para descubrir sabores, celebrar lo cotidiano y cocinar con el alma.
+                    </p>
+                </div>
+
+                <!-- Botón de Acción Principal y Scroll Indicador -->
+                <div class="relative z-10 pb-16 text-center space-y-6 flex flex-col items-center">
+                    <button onclick="scrollToDay('lunes')" class="group flex items-center space-x-3 border border-gold/40 hover:border-gold text-gold hover:text-white transition-all duration-300 py-3 px-8 rounded-full bg-zinc-900/60 backdrop-blur-sm text-xs tracking-[4px] uppercase">
+                        <span>Iniciar Experiencia</span>
+                        <i data-lucide="arrow-down" class="w-4 h-4 transform group-hover:translate-y-1 transition-transform"></i>
+                    </button>
+                    <div class="text-[9px] tracking-[3px] text-zinc-500 uppercase animate-bounce mt-4 font-sans">Desliza para explorar</div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- ACTO 3: HISTORIAS EDITORIALES POR DÍA -->
+            <!-- ========================================== -->
+            
+            <!-- LUNES -->
+            <section id="lunes" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-50 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full">
+                    <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=80" alt="Arte abstracto de trazos dorados" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-warm-50 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo I</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800">"El viaje comienza en los aromas del lejano oriente, fusionados con la dulzura francesa de la mañana."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">I</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Lunes</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">Aromas de Oriente</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Lunes -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('lunes', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Pain Perdu & Capuchino Limu Crush</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Tostadas francesas doradas lentamente en mantequilla, acompañadas de un capuchino espumoso y denso de Café Limu Crush (80% Arábica / 20% Robusta).</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('lunes', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Pollo de Mercado Oriental</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Pechuga salteada con pimientos, zanahoria, zapallo italiano y arroz blanco perfumado.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('lunes', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Jardín Crujiente</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Hojas de lechuga rellenas con pollo dorado, pepino fresco y aderezo cítrico.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>01 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MARTES -->
+            <section id="martes" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-100 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full lg:order-last">
+                    <img src="https://images.unsplash.com/photo-1580136579312-94651dfd596d?auto=format&fit=crop&w=1200&q=80" alt="Bodegón clásico, naturaleza muerta al óleo" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-l from-warm-100 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo II</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800">"Cocinar de noche cura el ajetreo del día. Una mesa cálida como refugio."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">II</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Martes</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">Confort & Oficina</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Martes -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('martes', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Yogur & Espresso Lavazza Ácido</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Yogur cremoso natural con muesli y miel, maridado con el toque vibrante y la acidez equilibrada de un espresso Lavazza.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('martes', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Pastel de la Casa</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Pollo tierno desmenuzado, choclo dulce, cebolla caramelizada y un gratinado dorado en queso.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('martes', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Zapallo Asado</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Crema aterciopelada de zapallo butternut, ajo asado lentamente al horno y crutones crujientes.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>02 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIÉRCOLES -->
+            <section id="miercoles" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-50 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full">
+                    <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=1200&q=80" alt="Ilustración botánica clásica, óleo oscuro" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-warm-50 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo III</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800 font-light">"La cuchara enciende la memoria. Cocina de olla, fuego bajo, sabores de siempre."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">III</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Miércoles</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">Tradición y Sabor</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Miércoles -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('miercoles', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Albahaca, Huevos & Té de Matcha</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Huevos revueltos sobre pan tostado y hojas de albahaca, acompañados de una taza vibrante de té Verde con Matcha.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('miercoles', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Lentejas Estofadas</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Estofado de cocción lenta con sofrito aromático, zanahoria y jugosos trozos de lomo vetado.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('miercoles', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Bruschetta de Lomo</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Pan crujiente frotado con ajo, lomo sellado, queso fundido de calidad y albahaca fresca.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>03 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- JUEVES -->
+            <section id="jueves" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-100 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full lg:order-last">
+                    <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80" alt="Acuarela botánica minimalista" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-l from-warm-100 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo IV</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800">"El encanto de lo verde. De la huerta a la mesa con el toque marino del atún."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">IV</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Jueves</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">De la Huerta al Plato</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Jueves -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-550 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('jueves', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Sellado & Té de Menta o Lemonbalm</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Sándwich de pan crujiente con queso fundido, maridado con una reconfortante taza de té de Menta o de Lemonbalm.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-550 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('jueves', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Budín Dorado</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Budín esponjoso de acelga, coliflor fresca, huevo de campo y una generosa cubierta de queso gratinado.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-550 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('jueves', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Fettuccine al Ajillo con Atún</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Pasta fresca, dientes de ajo laminados dorados en oliva, cilantro recién picado y lomos de atún.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>04 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIERNES -->
+            <section id="viernes" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-50 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full">
+                    <img src="https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?auto=format&fit=crop&w=1200&q=80" alt="Óleo con pinceladas cálidas y abstractas" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-warm-50 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo V</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800">"El fin de semana se siente cerca. Un bocado ibérico clásico y confort total."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">V</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Viernes</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">Ejecutivo & España</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Viernes -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('viernes', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>To Go & Americano Limu Crush</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Yogur y cereales para llevar, combinados con la vitalidad y fuerza oscura de un americano largo de Café Limu Crush.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('viernes', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Lomo & Pimientos</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Sándwich caliente de pan crujiente, lomo vetado sellado a la plancha y pimientos dulces asados.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('viernes', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Tortilla Española Clásica</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Papas confitadas, cebolla perfectamente caramelizada y huevo tierno en su punto justo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>05 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SÁBADO -->
+            <section id="sabado" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-100 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full lg:order-last">
+                    <img src="https://images.unsplash.com/photo-1501472312651-726afd116ff1?auto=format&fit=crop&w=1200&q=80" alt="Expresión abstracta contemporánea en lienzo" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-l from-warm-100 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo VI</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800">"El fin de semana es el lienzo del chef. Tiempo libre para sabores vibrantes e intensos."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">VI</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Sábado</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">Fin de Semana de Autor</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Sábado -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('sabado', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Paila Campestre, Espresso o Té de Matico</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Huevos revueltos de campo con pimientos y cebolla, servidos junto a un espresso intenso de Café Limu Crush o una infusión de Matico.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('sabado', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Pasta con Salsa de Oro</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Pasta fresca bañada en sedosa crema de zapallo asado, cilantro de huerto y coronado con pollo crocante.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('sabado', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Ceviche de Huerto</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Fresco atún marinado en jugo de limón recién exprimido, cilantro, cebolla morada y cubos de palta.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>06 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DOMINGO -->
+            <section id="domingo" class="editorial-section grid grid-cols-1 lg:grid-cols-12 bg-warm-50 overflow-hidden">
+                <div class="lg:col-span-6 relative h-[40vh] lg:h-full">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80" alt="Lienzo de arte fluido etéreo" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-warm-50 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-6 left-6 lg:bottom-12 lg:left-12 text-white lg:text-warm-900 bg-black/40 lg:bg-transparent p-4 lg:p-0 rounded-lg">
+                        <span class="text-[10px] tracking-[4px] uppercase font-medium text-gold/90 font-sans">Lienzo VII</span>
+                        <p class="font-serif italic text-lg lg:text-2xl text-white lg:text-warm-800">"El cierre perfecto. Cocina sin prisa, un gran café o té aromático y el placer de estar juntos."</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-6 flex flex-col justify-between p-8 lg:p-20 overflow-y-auto">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="font-serif text-6xl md:text-8xl text-gold/30 font-light">VII</span>
+                            <div>
+                                <h2 class="font-serif text-4xl md:text-5xl tracking-wide uppercase">Domingo</h2>
+                                <h3 class="font-serif italic text-warm-500 text-lg">El Banquete del Chef</h3>
+                            </div>
+                        </div>
+                        <div class="w-full h-[1px] bg-warm-900/10 my-6"></div>
+                        
+                        <!-- Lista de Comidas del Domingo -->
+                        <div class="space-y-6 md:space-y-8">
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('domingo', 'desayuno')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Desayuno</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Mesa de Domingo & Capuchino Lavazza o Té Floral</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Tostadas calientes con palta, huevos y yogur, acompañados de capuchinos equilibrados de Café Lavazza o tés de Rosa de Jamaica, Manzanilla u Ocho Hierbas.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('domingo', 'almuerzo')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Almuerzo</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>Corte del Chef</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Lomo vetado de cocción paciente a la plancha bañado en mantequilla de romero y ajo, acompañado de arroz primavera.</p>
+                            </div>
+                            <div class="group cursor-pointer hover:bg-warm-100/50 p-4 rounded-xl transition-all duration-300" onclick="openRecipeModal('domingo', 'cena')">
+                                <span class="text-[9px] uppercase tracking-[3px] text-gold font-semibold font-sans">Cena</span>
+                                <h4 class="font-serif text-xl md:text-2xl font-medium text-warm-800 mt-1 flex items-center justify-between">
+                                    <span>El Huerto Nocturno</span>
+                                    <i data-lucide="plus" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-all"></i>
+                                </h4>
+                                <p class="text-sm text-warm-900/70 mt-2 font-light">Sándwich tostado de queso derretido, láminas de zapallo italiano asadas y hojas frescas de albahaca de casa.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-warm-900/40 uppercase tracking-[2px] mt-8 flex justify-between items-center font-sans">
+                        <span>Gastronomía Compartida</span>
+                        <span>07 / 07</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- COMPONENTE: MODAL DE RECETA Y SECRETOS -->
+    <!-- ========================================== -->
+    <div id="recipe-modal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 md:p-6 hidden opacity-0 transition-opacity duration-500">
+        <div class="bg-warm-50 border border-warm-200 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl relative flex flex-col max-h-[90vh] transition-transform duration-500 scale-95 transform">
+            
+            <!-- Encabezado con imagen abstracta -->
+            <div class="h-28 bg-gradient-to-r from-gold to-sage relative flex items-center p-6">
+                <button onclick="closeRecipeModal()" class="absolute top-4 right-4 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <div>
+                    <span class="text-[9px] uppercase tracking-[3px] text-white/90 font-semibold font-sans" id="modal-meal-type">Categoría</span>
+                    <h3 class="font-serif text-2xl text-white font-medium" id="modal-meal-name">Nombre de Comida</h3>
+                </div>
+            </div>
+
+            <!-- Contenido scrollable -->
+            <div class="p-6 overflow-y-auto space-y-6">
+                <div>
+                    <h4 class="text-xs font-semibold uppercase text-gold tracking-wider mb-2 font-sans">Ingredientes sugeridos</h4>
+                    <ul class="space-y-1 text-sm text-warm-900/80" id="modal-ingredients-list">
+                        <!-- Llenado por JS -->
+                    </ul>
+                </div>
+
+                <div class="border-t border-warm-200 pt-4">
+                    <h4 class="text-xs font-semibold uppercase text-gold tracking-wider mb-2 font-sans">Consejo de preparación</h4>
+                    <p class="text-sm text-warm-900/70 leading-relaxed font-light" id="modal-prep-tips">
+                        <!-- Llenado por JS -->
+                    </p>
+                </div>
+
+                <div class="bg-warm-200/50 p-4 rounded-2xl border border-warm-200">
+                    <h4 class="text-xs font-semibold uppercase text-amber-700 tracking-wider mb-1 flex items-center space-x-1.5 font-sans">
+                        <i data-lucide="heart" class="w-3.5 h-3.5 fill-amber-700 text-amber-700"></i>
+                        <span>El Toque de Amor</span>
+                    </h4>
+                    <p class="text-xs text-warm-800/90 italic" id="modal-love-note">
+                        <!-- Llenado por JS -->
+                    </p>
+                </div>
+            </div>
+
+            <div class="p-4 bg-warm-100 border-t border-warm-200 flex justify-end">
+                <button onclick="closeRecipeModal()" class="bg-warm-900 text-white hover:bg-warm-800 transition-all text-xs uppercase tracking-wider py-2 px-6 rounded-xl font-medium font-sans">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SISTEMA DE SCRIPTS (AUDIO, ANIMACIONES, PARTÍCULAS) -->
+    <!-- ========================================== -->
+    <script>
+        // Inicialización de iconos Lucide
+        lucide.createIcons();
+
+        // Base de Datos de Recetas e Ingredientes Detallados (Sin 'artesanal', cafés Limu/Lavazza, tés específicos)
+        const recipeDatabase = {
+            lunes: {
+                desayuno: {
+                    name: "Pain Perdu & Capuchino Limu Crush",
+                    ingredients: [
+                        "4 rodajas de pan brioche grueso o baguette del día anterior",
+                        "2 huevos frescos de campo",
+                        "1/2 taza de leche entera",
+                        "1 cucharada de vainilla natural",
+                        "Cucharadita de canela molida",
+                        "2 cucharadas de mantequilla para dorar",
+                        "Miel de maple, azúcar glass o frutos rojos",
+                        "Café Limu Crush (80% Arábica / 20% Robusta) molido para capuchino",
+                        "Leche texturizada con microespuma densa"
+                    ],
+                    tips: "Remoja el brioche en el batido de huevo y leche por 30 segundos de cada lado. Cocina lentamente con mantequilla. Acompaña con el capuchino de Café Limu Crush; su cuerpo oscuro y notas achocolatadas equilibran el dulzor.",
+                    loveNote: "Sírvelos juntos en la mesa con un chorrito abundante de miel y compartan ese capuchino espumoso de carácter intenso."
+                },
+                almuerzo: {
+                    name: "Pollo de Mercado Oriental",
+                    ingredients: [
+                        "2 pechugas de pollo cortadas en cubos",
+                        "1 pimiento rojo y 1 pimiento verde en juliana",
+                        "1 zanahoria mediana picada en rodajas finas",
+                        "1 zapallo italiano pequeño en rodajas",
+                        "Arroz jazmín o basmati perfumado",
+                        "Salsa de soya baja en sodio, jengibre rallado y aceite de sésamo"
+                    ],
+                    tips: "Saltea los vegetales a fuego muy alto por pocos minutos para mantener su textura crocante. El pollo se sella primero para retener todos sus jugos.",
+                    loveNote: "Mientras uno saltea con energía el wok, el otro puede preparar el arroz dándole un toque con semillas de sésamo tostadas."
+                },
+                cena: {
+                    name: "Jardín Crujiente",
+                    ingredients: [
+                        "1 lechuga costina fresca (hojas grandes seleccionadas)",
+                        "Pollo desmenuzado (puedes usar el sobrante del almuerzo)",
+                        "1 pepino en rodajas transparentes",
+                        "1 limón de Pica o limón sutil (jugo fresco)",
+                        "Salsa de sésamo tostado o aderezo cítrico de la casa"
+                    ],
+                    tips: "Lava y seca muy bien las hojas de lechuga en un centrifugador para que queden extremadamente firmes y crujientes al morder.",
+                    loveNote: "Disfruta de esta cena fresca usando las manos. El juego de armarse cada uno sus wraps genera una cercanía hermosa para cerrar el lunes."
+                }
+            },
+            martes: {
+                desayuno: {
+                    name: "Yogur & Espresso Lavazza Ácido",
+                    ingredients: [
+                        "2 tazas de yogur natural búlgaro sin azúcar",
+                        "1 taza de muesli o granola con frutos secos",
+                        "Miel de palma o miel de abejas orgánica",
+                        "Semillas de chía y lino",
+                        "Café Lavazza molido fino para máquina de espresso"
+                    ],
+                    tips: "Pon el yogur en el tazón de tu pareja, dibuja una espiral con miel y esparce la granola. Sirve junto a un espresso Lavazza de acidez brillante y fina que despierta las papilas.",
+                    loveNote: "Un desayuno rápido pero lleno de cuidado. Un beso de buenos días con el distinguido aroma e intensidad equilibrada de Lavazza."
+                },
+                almuerzo: {
+                    name: "Pastel de la Casa",
+                    ingredients: [
+                        "Pollo tierno desmenuzado en salsa",
+                        "2 tazas de choclo dulce desgranado (puede ser pastelera)",
+                        "1 cebolla grande caramelizada en mantequilla",
+                        "Queso mantecoso o mozzarella para gratinar"
+                    ],
+                    tips: "Ensambla el pastel en una fuente de greda para mantener la tradición chilena. Llévalo al horno a máxima temperatura los últimos 5 minutos solo para gratinar el queso.",
+                    loveNote: "El aroma a choclo y queso fundido saliendo del horno te hará sentir en casa sin importar cuán cansador haya sido el día de trabajo."
+                },
+                cena: {
+                    name: "Zapallo Asado Aterciopelado",
+                    ingredients: [
+                        "1 zapallo butternut mediano",
+                        "1 cabeza entera de ajo (para asar)",
+                        "1/2 taza de crema de leche o leche de coco",
+                        "Crutones de pan dorados en aceite de oliva y ajo",
+                        "Caldo de verduras casero"
+                    ],
+                    tips: "Asa el zapallo cortado a la mitad con piel y los dientes de ajo envueltos en alusa. Luego, retira la pulpa suave y licúa con el caldo caliente para una textura perfecta.",
+                    loveNote: "Una sopa tibia es como un abrazo en un tazón. Tómenla acurrucados con música relajante de fondo."
+                }
+            },
+            miercoles: {
+                desayuno: {
+                    name: "Albahaca, Huevos & Té de Matcha",
+                    ingredients: [
+                        "4 huevos de campo seleccionados",
+                        "2 rodajas de pan de masa madre grueso",
+                        "Un manojo de albahaca fresca de huerto",
+                        "Té Verde con Matcha en polvo premium",
+                        "Agua a 80°C para la emulsión tradicional"
+                    ],
+                    tips: "Bate los huevos suavemente con un chorrito de agua fría en lugar de leche para conseguir una esponjosidad inigualable a fuego bajo. Acompaña con un cuenco espumoso de té de Matcha batido.",
+                    loveNote: "El olor a albahaca fresca por la mañana y el verde vivo del matcha tienen el poder de transformar cualquier miércoles en un día festivo."
+                },
+                almuerzo: {
+                    name: "Lentejas Estofadas de Lomo",
+                    ingredients: [
+                        "2 tazas de lentejas seleccionadas (remojadas previamente)",
+                        "300g de lomo vetado cortado en cubos pequeños",
+                        "Sofrito casero (cebolla, zanahoria, pimentón, ajo, orégano)",
+                        "1 papa mediana cortada en cubitos"
+                    ],
+                    tips: "Sella bien el lomo antes de incorporar las lentejas para que el sabor de la carne quede impregnado en el sofrito del fondo de la olla.",
+                    loveNote: "Cocinar legumbres requiere tiempo y paciencia, exactamente como los mejores momentos de una relación."
+                },
+                cena: {
+                    name: "Bruschetta de Lomo",
+                    ingredients: [
+                        "Pan baguette o de campo tostado",
+                        "1 diente de ajo entero",
+                        "Carne de lomo sellada (puedes reservar del almuerzo)",
+                        "Queso fundido y hojas frescas de albahaca"
+                    ],
+                    tips: "Frota el diente de ajo crudo directamente sobre la superficie del pan recién tostado y caliente; liberará sus aceites esenciales de forma sutil.",
+                    loveNote: "Acompaña con dos copas de tu vino favorito mientras se cuentan las anécdotas de mitad de semana."
+                }
+            },
+            jueves: {
+                desayuno: {
+                    name: "Sellado Clásico & Té de Menta o Lemonbalm",
+                    ingredients: [
+                        "4 rebanadas de pan de molde o baguette",
+                        "Abundante queso fundido (chanco, mantecoso o gouda)",
+                        "Hojas frescas de Menta o Lemonbalm",
+                        "Agua caliente para infusión purificadora"
+                    ],
+                    tips: "Pon un peso sobre el sándwich en la sartén para lograr un tostado uniforme. Acompaña con té de Menta fresca o Lemonbalm para una digestión balanceada y placentera.",
+                    loveNote: "Un clásico reconfortante e infalible, hecho con el esmero de quien quiere cuidar al otro."
+                },
+                almuerzo: {
+                    name: "Budín Dorado de Huerta",
+                    ingredients: [
+                        "1 mata de acelga fresca cocida",
+                        "1/2 coliflor mediana hervida y desmenuzada",
+                        "3 huevos enteros",
+                        "Queso parmesano para espolvorear y gratinar"
+                    ],
+                    tips: "Escurre muy bien la acelga apretándola con un paño de cocina limpio para eliminar todo exceso de agua antes de mezclar con el huevo batido.",
+                    loveNote: "Una comida nutritiva y ligera que te recarga de energía pura de la tierra."
+                },
+                cena: {
+                    name: "Fettuccine al Ajillo con Atún",
+                    ingredients: [
+                        "300g de pasta fresca fettuccine",
+                        "4 dientes de ajo laminados finos",
+                        "Aceite de oliva extra virgen",
+                        "Cilantro picado finamente",
+                        "1 lata de atún de excelente calidad"
+                    ],
+                    tips: "Dora el ajo muy lentamente en abundante aceite de oliva; ten cuidado de que no se queme, pues se pondría amargo.",
+                    loveNote: "La pasta al ajillo es rápida de preparar, ideal para no pasar tanto tiempo cocinando y disfrutar más de la velada de jueves."
+                }
+            },
+            viernes: {
+                desayuno: {
+                    name: "Yogur To Go & Americano Limu Crush",
+                    ingredients: [
+                        "Yogur líquido o bebible natural",
+                        "Mix de frutos secos (almendras, nueces, pasas)",
+                        "Un plátano maduro",
+                        "Café Limu Crush molido medio para prensa francesa o filtro"
+                    ],
+                    tips: "Prepara un café americano largo e intenso con Café Limu Crush. El cuerpo negro y notas achocolatadas de este blend te darán energía instantánea.",
+                    loveNote: "Es viernes, se siente la brisa de descanso. Un café americano con carácter para activar la mañana."
+                },
+                almuerzo: {
+                    name: "Sándwich de Lomo & Pimientos",
+                    ingredients: [
+                        "Pan ciabatta o baguette fresco",
+                        "Lomo vetado a la plancha en láminas",
+                        "Pimientos rojos asados y pelados",
+                        "Hojas frescas de lechuga o rúcula"
+                    ],
+                    tips: "Unta el pan con un toque de mostaza Dijon o mayonesa casera al ajo para potenciar los sabores de la carne y los pimientos.",
+                    loveNote: "Un almuerzo rápido pero con estilo de bistró para celebrar que ya es viernes por la tarde."
+                },
+                cena: {
+                    name: "Tortilla Española de Amor",
+                    ingredients: [
+                        "4 papas grandes peladas y cortadas en rodajas finas",
+                        "1 cebolla grande picada en pluma",
+                        "5 a 6 huevos de campo",
+                        "Aceite de oliva abundante para confitar las papas"
+                    ],
+                    tips: "Con fita las papas y la cebolla a fuego muy lento en el aceite de oliva hasta que estén tiernas, no fritas. Mézclalas con el huevo batido y déjalas reposar 10 minutos antes de cuajar la tortilla en la sartén.",
+                    loveNote: "Dar vuelta la tortilla es el trabajo en equipo definitivo. ¡Sostengan el plato con confianza entre los dos!"
+                }
+            },
+            sabado: {
+                desayuno: {
+                    name: "Paila Campestre, Espresso Limu o Té de Matico",
+                    ingredients: [
+                        "4 huevos frescos de campo",
+                        "1/2 cebolla picada fina en cubitos",
+                        "1/2 pimentón rojo cortado en cubitos",
+                        "Hojas de Matico deshidratadas",
+                        "Café Limu Crush molido fino para un espresso potente"
+                    ],
+                    tips: "Cocina las verduras primero hasta que estén translúcidas antes de verter los huevos. Sirve junto a un espresso denso de Limu Crush o un té de Matico con propiedades reconfortantes.",
+                    loveNote: "Sábado en pijama. El desayuno se extiende tanto como dure la conversación sobre la mesa."
+                },
+                almuerzo: {
+                    name: "Pasta con Salsa de Oro & Pollo Crocante",
+                    ingredients: [
+                        "300g de tu pasta favorita",
+                        "Crema de zapallo asado (reservada de la preparación anterior)",
+                        "2 filetes de pechuga de pollo marinados",
+                        "Queso de pasta hilada rallado y finas hierbas"
+                    ],
+                    tips: "Pasa el pollo por una mezcla de pan rallado y parmesano antes de cocinarlo al horno o sartén para lograr una costra increíblemente crujiente.",
+                    loveNote: "Una receta reconfortante y elegante que parece de restaurante de autor pero hecha con vuestras propias manos."
+                },
+                cena: {
+                    name: "Ceviche de Huerto Marino",
+                    ingredients: [
+                        "300g de lomo de atún fresco cortado en cubos pequeños",
+                        "Jugo de 4 limones sutiles exprimidos al instante",
+                        "Cilantro fresco picado finamente",
+                        "1 cebolla de verdeo o cebolla morada cortada fina",
+                        "Cubos de palta madura"
+                    ],
+                    tips: "Mantén el atún muy frío hasta el momento de mezclarlo. El limón debe marinarse con la cebolla y el pescado por un máximo de 5 minutos antes de servir para no sobrecocinarlo.",
+                    loveNote: "Acompaña este ceviche fresco con tostadas crujientes y un espumante helado para brindar por el amor."
+                }
+            },
+            domingo: {
+                desayuno: {
+                    name: "Mesa de Domingo, Capuchino Lavazza o Té de Jamaica/Manzanilla/Ocho Hierbas",
+                    ingredients: [
+                        "Café Lavazza molido fino",
+                        "Leche texturizada cremosa",
+                        "Flores de Rosa de Jamaica, Manzanilla o mezcla de Ocho Hierbas",
+                        "Tostadas calientes con palta molida",
+                        "Huevos de campo al gusto",
+                        "Yogur natural con muesli y frambuesas"
+                    ],
+                    tips: "Prepara una tetera cristalina con la Rosa de Jamaica (su tono rubí y acidez floral combinan hermoso) o sirve capuchinos sedosos con Lavazza destacando su acidez sutil.",
+                    loveNote: "No hay alarmas, no hay prisa. Solo ustedes dos, un café brillante, una infusión cálida y un domingo entero por delante."
+                },
+                almuerzo: {
+                    name: "Corte del Chef & Arroz Primavera",
+                    ingredients: [
+                        "2 cortes gruesos de lomo vetado",
+                        "1 taza de arroz blanco cocido con zanahoria, choclo y arvejas",
+                        "Mantequilla de ajo y romero para bañar la carne"
+                    ],
+                    tips: "Sella la carne a fuego muy fuerte en una sartén de fierro fundido. Baña constantemente la superficie de la carne con mantequilla derretida, ajo aplastado y romero fresco.",
+                    loveNote: "Un almuerzo glorioso para coronar el fin de semana. El aroma a romero impregnará la cocina con recuerdos inolvidables."
+                },
+                cena: {
+                    name: "El Huerto Nocturno",
+                    ingredients: [
+                        "Pan de molde o baguette",
+                        "Queso mozzarella o mantecoso",
+                        "Rodajas finas de zapallo italiano gratinadas",
+                        "Hojas de albahaca fresca de vuestro balcón o jardín"
+                    ],
+                    tips: "Asa el zapallo italiano con un toque de sal y orégano antes de ponerlo en el sándwich para concentrar su dulzor natural.",
+                    loveNote: "El final perfecto para una semana perfecta. Un bocado simple pero delicioso para descansar antes de un nuevo lunes."
+                }
+            }
+        };
+
+        // ==========================================
+        // MOTOR GRÁFICO DEL INTRO (CANVAS) - NUEVO & SEGURO
+        // ==========================================
+        const canvas = document.getElementById('intro-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        let zoomProgress = 0; 
+        const duration = 6500; // REDUCIDO A 6.5 SEGUNDOS PARA SER SNAPPY Y FLUIDO
+        let startTime = null;
+
+        // Estrellas del espacio profundo
+        const stars = Array.from({ length: 100 }, () => ({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size: 0.5 + Math.random() * 1.5,
+            alpha: Math.random(),
+            speed: 0.02 + Math.random() * 0.03
+        }));
+
+        const stages = [
+            { threshold: 10, name: "Cosmos Profundo", coords: "LAT: 0.0000 | LON: 0.0000", text: "Toda historia de amor comienza en algún rincón del cosmos..." },
+            { threshold: 30, name: "Aproximación Terrestre", coords: "LAT: -25.0421 | LON: -65.2341", text: "Guiados por el calor de una cocina que espera..." },
+            { threshold: 50, name: "Sudamérica - Chile", coords: "LAT: -33.4489 | LON: -70.6693", text: "Buscando un puerto entre montañas y cordilleras..." },
+            { threshold: 70, name: "Santiago de Chile", coords: "LAT: -33.4901 | LON: -70.6012", text: "Hasta llegar al barrio donde ocurre la magia..." },
+            { threshold: 88, name: "Macul — Av. Quilín", coords: "LAT: -33.4883 | LON: -70.5976", text: "La mesa está servida. El viaje ha terminado exactamente en casa." }
+        ];
+
+        // Ángulo de rotación de la Tierra procedimental 3D
+        let earthRotation = 0;
+
+        function animateIntro(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            
+            zoomProgress = Math.min((elapsed / duration) * 100, 100);
+
+            // Fondo negro puro espacial
+            ctx.fillStyle = '#050505';
+            ctx.fillRect(0, 0, width, height);
+
+            // 1. Dibujar estrellas en movimiento acelerado
+            stars.forEach(star => {
+                const centerX = width / 2;
+                const centerY = height / 2;
+                
+                let dx = star.x - centerX;
+                let dy = star.y - centerY;
+                let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                
+                // Las estrellas aumentan su velocidad exponencialmente con el zoom
+                const currentSpeed = star.speed * (1 + (zoomProgress / 6));
+                
+                star.x += (dx / dist) * currentSpeed * dist * 0.2;
+                star.y += (dy / dist) * currentSpeed * dist * 0.2;
+
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha * (1 - zoomProgress / 100)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size * (1 + zoomProgress / 30), 0, Math.PI * 2);
+                ctx.fill();
+
+                if (star.x < 0 || star.x > width || star.y < 0 || star.y > height) {
+                    star.x = centerX + (Math.random() - 0.5) * 50;
+                    star.y = centerY + (Math.random() - 0.5) * 50;
+                    star.alpha = Math.random();
+                }
+            });
+
+            // 2. Globo Terráqueo 3D Lineal Matemático que rota y se expande
+            if (zoomProgress < 85) {
+                earthRotation += 0.012;
+                const centerX = width / 2;
+                const centerY = height / 2;
+                
+                // Radio que crece exponencialmente al final
+                const R = (width < 768 ? 80 : 160) * Math.pow(1.11, zoomProgress * 0.2); 
+                const globeAlpha = Math.max(0, Math.min(0.8, 1 - (zoomProgress - 65) / 20));
+
+                ctx.strokeStyle = `rgba(196, 155, 101, ${globeAlpha})`; // Tono oro
+                ctx.lineWidth = 0.8;
+
+                // Dibujar anillos de latitud en 3D
+                for (let lat = -Math.PI / 2; lat <= Math.PI / 2; lat += Math.PI / 6) {
+                    ctx.beginPath();
+                    const rLat = R * Math.cos(lat);
+                    const yLat = centerY + R * Math.sin(lat);
+                    
+                    // Proyección en perspectiva de elipse de latitud
+                    ctx.ellipse(centerX, yLat, rLat, rLat * 0.25, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Dibujar líneas de longitud en 3D rotativas
+                for (let lon = 0; lon < Math.PI * 2; lon += Math.PI / 6) {
+                    const currentLon = lon + earthRotation;
+                    ctx.beginPath();
+                    
+                    // Trazar arco de longitud visible
+                    for (let lat = -Math.PI / 2; lat <= Math.PI / 2; lat += 0.1) {
+                        const x = R * Math.cos(lat) * Math.sin(currentLon);
+                        const z = R * Math.cos(lat) * Math.cos(currentLon);
+                        
+                        // Solo dibujamos la cara delantera del globo para simular volumen
+                        if (z >= 0) {
+                            const screenX = centerX + x;
+                            const screenY = centerY + R * Math.sin(lat);
+                            if (lat === -Math.PI / 2) {
+                                ctx.moveTo(screenX, screenY);
+                            } else {
+                                ctx.lineTo(screenX, screenY);
+                            }
+                        }
+                    }
+                    ctx.stroke();
+                }
+
+                // Halo exterior brillante de atmósfera
+                ctx.strokeStyle = `rgba(196, 155, 101, ${globeAlpha * 0.35})`;
+                ctx.lineWidth = 12;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, R, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // 3. Telemetría GPS de Radar
+            if (zoomProgress > 50 && zoomProgress < 98) {
+                const gridAlpha = Math.min(0.6, (zoomProgress - 50) / 30) * Math.max(0, 1 - (zoomProgress - 85) / 13);
+                ctx.strokeStyle = `rgba(196, 155, 101, ${gridAlpha})`;
+                ctx.lineWidth = 0.6;
+
+                const maxRadar = Math.max(width, height) * 0.8;
+                for (let r = 80; r < maxRadar; r += 120) {
+                    ctx.beginPath();
+                    ctx.arc(width / 2, height / 2, r * (1 + (zoomProgress - 50) / 40), 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(width / 2, 0); ctx.lineTo(width / 2, height);
+                ctx.moveTo(0, height / 2); ctx.lineTo(width, height / 2);
+                ctx.stroke();
+            }
+
+            // 4. Pulso final de aproximación en Macul
+            if (zoomProgress > 80) {
+                const mapAlpha = Math.min(1, (zoomProgress - 80) / 18);
+                const markerSize = (100 - zoomProgress) * 5 + 8;
+                
+                ctx.strokeStyle = `rgba(196, 155, 101, ${mapAlpha})`;
+                ctx.fillStyle = `rgba(196, 155, 101, ${mapAlpha * 0.18})`;
+                ctx.lineWidth = 1.5;
+                
+                ctx.beginPath();
+                ctx.arc(width / 2, height / 2, Math.max(5, markerSize), 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.arc(width / 2, height / 2, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+            }
+
+            // Control de textos del Intro sin retrasos
+            const currentStage = stages.find((s, idx) => {
+                const nextStage = stages[idx + 1];
+                return zoomProgress >= s.threshold && (!nextStage || zoomProgress < nextStage.threshold);
+            });
+
+            if (currentStage) {
+                const nText = document.getElementById('narrative-text');
+                const nSub = document.getElementById('narrative-subtext');
+                const cDisp = document.getElementById('coords-display');
+
+                if (nText && nText.innerText !== currentStage.text) {
+                    nText.classList.add('opacity-0', 'translate-y-4');
+                    nSub.classList.add('opacity-0');
+                    setTimeout(() => {
+                        nText.innerText = currentStage.text;
+                        nSub.innerText = currentStage.name;
+                        nText.classList.remove('opacity-0', 'translate-y-4');
+                        nSub.classList.remove('opacity-0');
+                    }, 200);
+                }
+                if (cDisp) cDisp.innerText = currentStage.coords;
+            }
+
+            if (zoomProgress < 100) {
+                requestAnimationFrame(animateIntro);
+            } else {
+                skipIntro();
+            }
+        }
+
+        // Ejecutar inmediatamente (evita quedarse congelado en previsualización)
+        requestAnimationFrame(animateIntro);
+
+
+        // ==========================================
+        // SISTEMA DE AUDIO CINEMÁTICO SEGURA (WEB AUDIO API)
+        // ==========================================
+        let audioCtx = null;
+        let ambientSynth = null;
+        let crackleNode = null;
+        let isMuted = true;
+
+        function initAudio() {
+            try {
+                if (audioCtx) return;
+                
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+
+                // Oscilador para drone melódico y ultra cálido de fondo
+                const osc = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(110, audioCtx.currentTime); // Nota La (A2)
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(250, audioCtx.currentTime); 
+
+                gainNode.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 3.0);
+
+                osc.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start();
+                ambientSynth = { osc, gainNode };
+
+                // Crujido sutil
+                const bufferSize = audioCtx.sampleRate * 2;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                noiseNode.loop = true;
+
+                const noiseFilter = audioCtx.createBiquadFilter();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                noiseFilter.Q.setValueAtTime(1.5, audioCtx.currentTime);
+
+                const noiseGain = audioCtx.createGain();
+                noiseGain.gain.setValueAtTime(0.0, audioCtx.currentTime);
+                noiseGain.gain.linearRampToValueAtTime(0.012, audioCtx.currentTime + 5.0);
+
+                noiseNode.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(audioCtx.destination);
+                
+                noiseNode.start();
+                crackleNode = { noiseNode, noiseGain };
+
+                isMuted = false;
+                updateAudioButtonsUI();
+            } catch (e) {
+                console.warn("Audio Context bloqueado o no soportado:", e);
+            }
+        }
+
+        function toggleAudio() {
+            if (!audioCtx) {
+                initAudio();
+                return;
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+                ambientSynth.gainNode.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.5);
+                crackleNode.noiseGain.gain.linearRampToValueAtTime(0.012, audioCtx.currentTime + 0.5);
+                isMuted = false;
+            } else if (isMuted) {
+                ambientSynth.gainNode.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.5);
+                crackleNode.noiseGain.gain.linearRampToValueAtTime(0.012, audioCtx.currentTime + 0.5);
+                isMuted = false;
+            } else {
+                ambientSynth.gainNode.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 0.5);
+                crackleNode.noiseGain.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 0.5);
+                isMuted = true;
+            }
+            updateAudioButtonsUI();
+        }
+
+        function updateAudioButtonsUI() {
+            const btn = document.getElementById('toggle-music');
+            if (isMuted) {
+                btn.classList.add('opacity-60');
+                btn.innerHTML = `<i data-lucide="music-4" class="w-5 h-5 text-zinc-500"></i>`;
+            } else {
+                btn.classList.remove('opacity-60');
+                btn.innerHTML = `<i data-lucide="music-2" class="w-5 h-5 text-gold animate-pulse"></i>`;
+            }
+            lucide.createIcons();
+        }
+
+
+        // ==========================================
+        // LIENZO DE PARTÍCULAS: BRILLITOS & GATITOS INTERACTIVOS
+        // ==========================================
+        const sparkleCanvas = document.getElementById('sparkle-canvas');
+        const sCtx = sparkleCanvas.getContext('2d');
+
+        let sWidth = sparkleCanvas.width = window.innerWidth;
+        let sHeight = sparkleCanvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            sWidth = sparkleCanvas.width = window.innerWidth;
+            sHeight = sparkleCanvas.height = window.innerHeight;
+        });
+
+        const particles = [];
+        let magicActive = false;
+        
+        // Coordenadas del cursor para interactividad física
+        const mouse = { x: -1000, y: -1000, active: false };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.active = true;
+            if (magicActive && Math.random() < 0.35) {
+                // Spawnea una ráfaga al mover el mouse
+                particles.push(new MagicParticle(Math.random() < 0.3 ? 'cat' : 'sparkle', mouse.x, mouse.y));
+            }
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                mouse.x = e.touches[0].clientX;
+                mouse.y = e.touches[0].clientY;
+                mouse.active = true;
+                if (magicActive && Math.random() < 0.35) {
+                    particles.push(new MagicParticle(Math.random() < 0.3 ? 'cat' : 'sparkle', mouse.x, mouse.y));
+                }
+            }
+        });
+
+        // Clase para crear destellos y gatitos flotantes de color ámbar/dorado
+        class MagicParticle {
+            constructor(type, startX, startY) {
+                this.type = type; // 'sparkle' o 'cat'
+                this.x = startX !== undefined ? startX : Math.random() * sWidth;
+                this.y = startY !== undefined ? startY : sHeight + 20;
+                this.size = type === 'cat' ? 14 + Math.random() * 10 : 3 + Math.random() * 5;
+                this.speedY = -(0.6 + Math.random() * 1.6);
+                this.speedX = (Math.random() - 0.5) * 0.6;
+                this.alpha = 0.3 + Math.random() * 0.7;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.03;
+                this.color = type === 'cat' ? `rgba(245, 158, 11, ${this.alpha})` : `rgba(251, 191, 36, ${this.alpha})`;
+            }
+
+            update() {
+                // Atracción suave al mouse si está cerca
+                if (mouse.active) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        this.speedX += (dx / dist) * 0.05;
+                        this.speedY += (dy / dist) * 0.05;
+                    }
+                }
+
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotSpeed;
+
+                // Desvanecimiento suave al ascender
+                if (this.y < sHeight * 0.2) {
+                    this.alpha -= 0.006;
+                }
+            }
+
+            draw() {
+                sCtx.save();
+                sCtx.globalAlpha = Math.max(0, this.alpha);
+                sCtx.translate(this.x, this.y);
+                sCtx.rotate(this.rotation);
+
+                if (this.type === 'cat') {
+                    // Silueta geométrica minimalista y adorable de gatito
+                    sCtx.fillStyle = this.color;
+                    sCtx.beginPath();
+                    // Cabeza
+                    sCtx.arc(0, 0, this.size * 0.5, 0, Math.PI * 2);
+                    sCtx.fill();
+                    // Oreja Izquierda
+                    sCtx.beginPath();
+                    sCtx.moveTo(-this.size * 0.4, -this.size * 0.15);
+                    sCtx.lineTo(-this.size * 0.55, -this.size * 0.65);
+                    sCtx.lineTo(-this.size * 0.1, -this.size * 0.35);
+                    sCtx.closePath();
+                    sCtx.fill();
+                    // Oreja Derecha
+                    sCtx.beginPath();
+                    sCtx.moveTo(this.size * 0.4, -this.size * 0.15);
+                    sCtx.lineTo(this.size * 0.55, -this.size * 0.65);
+                    sCtx.lineTo(this.size * 0.1, -this.size * 0.35);
+                    sCtx.closePath();
+                    sCtx.fill();
+                    // Ojos de luz brillantes
+                    sCtx.fillStyle = '#ffffff';
+                    sCtx.beginPath();
+                    sCtx.arc(-this.size * 0.16, -this.size * 0.05, 1.2, 0, Math.PI*2);
+                    sCtx.arc(this.size * 0.16, -this.size * 0.05, 1.2, 0, Math.PI*2);
+                    sCtx.fill();
+                } else {
+                    // Destello refinado romántico de 4 puntas
+                    sCtx.fillStyle = this.color;
+                    sCtx.beginPath();
+                    for (let i = 0; i < 4; i++) {
+                        sCtx.rotate(Math.PI / 2);
+                        sCtx.lineTo(0, 0 - this.size);
+                        sCtx.lineTo(0 + this.size * 0.2, 0);
+                    }
+                    sCtx.closePath();
+                    sCtx.fill();
+                }
+                sCtx.restore();
+            }
+        }
+
+        function animateMagic() {
+            if (!magicActive && particles.length === 0) {
+                sCtx.clearRect(0, 0, sWidth, sHeight);
+                return;
+            }
+
+            sCtx.clearRect(0, 0, sWidth, sHeight);
+
+            // Generador de partículas de flujo pasivo constante
+            if (magicActive && Math.random() < 0.2) {
+                const type = Math.random() < 0.25 ? 'cat' : 'sparkle'; 
+                particles.push(new MagicParticle(type));
+            }
+
+            // Actualizar y dibujar partículas existentes
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw();
+
+                // Eliminar partículas fuera de rango o desvanecidas
+                if (p.y < -30 || p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animateMagic);
+        }
+
+        // ==========================================
+        // SISTEMA DE NAVEGACIÓN Y CONTROLES GENERALES
+        // ==========================================
+
+        document.getElementById('skip-intro-btn').addEventListener('click', () => {
+            initAudio();
+            skipIntro();
+        });
+
+        function skipIntro() {
+            const introScreen = document.getElementById('intro-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            introScreen.classList.add('opacity-0');
+            setTimeout(() => {
+                introScreen.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                setTimeout(() => {
+                    mainContent.classList.remove('opacity-0');
+                    mainContent.classList.add('opacity-100');
+                    lucide.createIcons();
+                }, 50);
+            }, 1000);
+        }
+
+        function scrollToDay(dayId) {
+            const element = document.getElementById(dayId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const scrollWrapper = document.getElementById('editorial-wrapper');
+        const sections = document.querySelectorAll('.editorial-section');
+        const dots = document.querySelectorAll('.dot-link');
+
+        scrollWrapper.addEventListener('scroll', () => {
+            let currentIdx = 0;
+            const scrollPos = scrollWrapper.scrollTop + window.innerHeight / 2;
+
+            sections.forEach((section, index) => {
+                if (scrollPos >= section.offsetTop && scrollPos < (section.offsetTop + section.offsetHeight)) {
+                    currentIdx = index;
+                }
+            });
+
+            dots.forEach(dot => {
+                const target = parseInt(dot.getAttribute('data-target'));
+                const indicator = dot.querySelector('.dot-indicator');
+                if (target === currentIdx) {
+                    indicator.classList.remove('bg-warm-900/40', 'w-1.5', 'h-1.5');
+                    indicator.classList.add('bg-gold', 'w-3', 'h-3');
+                } else {
+                    indicator.classList.remove('bg-gold', 'w-3', 'h-3');
+                    indicator.classList.add('bg-warm-900/40', 'w-1.5', 'h-1.5');
+                }
+            });
+        });
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = dot.getAttribute('href').substring(1);
+                scrollToDay(targetId);
+            });
+        });
+
+
+        // ==========================================
+        // GESTIÓN DEL MODO CENA ROMÁNTICA
+        // ==========================================
+        const toggleCandleBtn = document.getElementById('toggle-candle');
+        toggleCandleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('candle-active');
+            document.body.classList.toggle('candle-mode');
+            
+            const isCandleActive = document.body.classList.contains('candle-active');
+            if (isCandleActive) {
+                toggleCandleBtn.classList.remove('bg-warm-100');
+                toggleCandleBtn.classList.add('bg-amber-950', 'border-amber-600');
+                toggleCandleBtn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-amber-400 animate-spin"></i>`;
+                
+                // Modulamos la música al drone romántico ultra íntimo
+                if (audioCtx && !isMuted && ambientSynth) {
+                    ambientSynth.osc.frequency.exponentialRampToValueAtTime(82.41, audioCtx.currentTime + 1.5); 
+                }
+
+                // Encender lluvia interactiva de brillitos y gatitos
+                magicActive = true;
+                animateMagic();
+            } else {
+                toggleCandleBtn.classList.add('bg-warm-100');
+                toggleCandleBtn.classList.remove('bg-amber-950', 'border-amber-600');
+                toggleCandleBtn.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>`;
+                
+                if (audioCtx && !isMuted && ambientSynth) {
+                    ambientSynth.osc.frequency.exponentialRampToValueAtTime(110.00, audioCtx.currentTime + 1.5); 
+                }
+
+                magicActive = false;
+            }
+            lucide.createIcons();
+        });
+
+        document.getElementById('toggle-music').addEventListener('click', toggleAudio);
+
+
+        // ==========================================
+        // MODALES DE RECETA DETALLADA
+        // ==========================================
+        function openRecipeModal(day, mealType) {
+            const modal = document.getElementById('recipe-modal');
+            const data = recipeDatabase[day][mealType];
+
+            if (!data) return;
+
+            document.getElementById('modal-meal-type').innerText = mealType;
+            document.getElementById('modal-meal-name').innerText = data.name;
+            
+            const ingredientsContainer = document.getElementById('modal-ingredients-list');
+            ingredientsContainer.innerHTML = '';
+            data.ingredients.forEach(ing => {
+                const li = document.createElement('li');
+                li.className = 'flex items-start space-x-2 py-0.5';
+                li.innerHTML = `
+                    <span class="text-gold mt-1">•</span>
+                    <span>${ing}</span>
+                `;
+                ingredientsContainer.appendChild(li);
+            });
+
+            document.getElementById('modal-prep-tips').innerText = data.tips;
+            document.getElementById('modal-love-note').innerText = data.loveNote;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.bg-warm-50').classList.remove('scale-95');
+                modal.querySelector('.bg-warm-50').classList.add('scale-100');
+            }, 50);
+        }
+
+        function closeRecipeModal() {
+            const modal = document.getElementById('recipe-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('.bg-warm-50').classList.add('scale-95');
+            modal.querySelector('.bg-warm-50').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 500);
+        }
+
+    </script>
+</body>
+</html>
+
+```
